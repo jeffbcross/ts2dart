@@ -106,6 +106,10 @@ describe('classes', () => {
       expectTranslate('class X { static get Y(): number {} }')
           .to.equal(' class X { static num get Y { } }');
     });
+    it('unwraps computed method expressions', () => {
+      expectTranslate('class X { [y]() {} }')
+          .to.equal(' class X { y ( ) { } }');
+    });
     it('supports constructors', () => {
       expectTranslate('class X { constructor() { } }').to.equal(' class X { X ( ) { } }');
     });

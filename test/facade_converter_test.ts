@@ -261,4 +261,18 @@ describe('type based translation', () => {
           .to.equal(' [ "a" , "b" ] . map ( ( x ) => x ) . toList ( ) ;');
     });
   });
+
+  describe('dynamic method invocation', () => {
+    it('should rewrite lifecycle hooks', () => {
+      expectWithTypes('foo[onInit]()').to.equal(' foo . onInit ( ) ;');
+      expectWithTypes('foo[onDestroy]()').to.equal(' foo . onDestroy ( ) ;');
+      expectWithTypes('foo[doCheck]()').to.equal(' foo . doCheck ( ) ;');
+      expectWithTypes('foo[onChanges]()').to.equal(' foo . onChanges ( ) ;');
+      expectWithTypes('foo[afterContentInit]()').to.equal(' foo . afterContentInit ( ) ;');
+      expectWithTypes('foo[afterContentChecked]()').to.equal(' foo . afterContentChecked ( ) ;');
+      expectWithTypes('foo[afterViewInit]()').to.equal(' foo . afterViewInit ( ) ;');
+      expectWithTypes('foo[afterViewChecked]()').to.equal(' foo . afterViewChecked ( ) ;');
+      expectWithTypes('foo["randomProperty"]()').to.equal(' foo [ "randomProperty" ] ( ) ;');
+    });
+  });
 });

@@ -115,6 +115,10 @@ class DeclarationTranspiler extends base.TranspilerBase {
         this.visitDeclarationMetadata(<ts.MethodDeclaration>node);
         this.visitFunctionLike(<ts.MethodDeclaration>node);
         break;
+      case ts.SyntaxKind.ComputedPropertyName:
+        this.visitDeclarationMetadata(<ts.MethodDeclaration>node);
+        this.visitFunctionLike((<ts.MethodDeclaration>node));
+        break;
       case ts.SyntaxKind.GetAccessor:
         this.visitDeclarationMetadata(<ts.MethodDeclaration>node);
         this.visitFunctionLike(<ts.AccessorDeclaration>node, 'get');
@@ -265,14 +269,16 @@ class DeclarationTranspiler extends base.TranspilerBase {
     if (accessor) this.emit(accessor);
     if (fn.name) this.visit(fn.name);
     // Dart does not even allow the parens of an empty param list on getter
-    if (accessor !== 'get') {
+    if (accessor !== 'get' && fn.kind !== ts.SyntaxKind.ComputedPropertyName) {
       this.visitParameters(fn.parameters);
     } else {
       if (fn.parameters && fn.parameters.length > 0) {
         this.reportError(fn, 'getter should not accept parameters');
       }
     }
-    if (fn.body) {
+    if (fn.kind === ts.SyntaxKind.ComputedPropertyName) {
+      this.emit((<any>fn).expression.text);
+    } else if (fn.body) {
       this.visit(fn.body);
     } else {
       this.emit(';');

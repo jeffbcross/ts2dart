@@ -83,9 +83,25 @@ class ExpressionTranspiler extends base.TranspilerBase {
       case ts.SyntaxKind.ElementAccessExpression:
         var elemAccess = <ts.ElementAccessExpression>node;
         this.visit(elemAccess.expression);
-        this.emit('[');
-        this.visit(elemAccess.argumentExpression);
-        this.emit(']');
+        var hooks:{[k:string]:boolean} = {
+          onInit: true,
+          onDestroy: true,
+          doCheck: true,
+          onChanges: true,
+          afterContentInit: true,
+          afterContentChecked: true,
+          afterViewInit: true,
+          afterViewChecked: true
+        };
+        if (hooks[elemAccess.argumentExpression.getText()]) {
+          this.emit('.');
+          this.visit(elemAccess.argumentExpression);
+        } else {
+          this.emit('[');
+          this.visit(elemAccess.argumentExpression);
+          this.emit(']');
+        }
+
         break;
 
       default:
